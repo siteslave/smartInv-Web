@@ -1,0 +1,156 @@
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="#/admin" routerLink="/admin">หน้าหลัก</a>
+  <a class="breadcrumb-item" href="#/admin/receives" routerLink="/admin/receives">รับสินค้าเข้าคลัง</a>
+  <span class="breadcrumb-item active">บันทึกรับสินค้าเข้าคลัง</span>
+</nav>
+
+<div class="card">
+  <div class="card-header">
+    รายละเอียดการรับสินค้าเข้าคลัง
+  </div>
+  <div class="card-block">
+    <div class="card-text">
+      <clr-stack-view>
+        <!-- <clr-stack-header>ข้อมูลการรับ</clr-stack-header> -->
+        <clr-stack-block [clrSbExpanded]="true">
+          <clr-stack-label>รายละเอียดการรับ</clr-stack-label>
+          <clr-stack-content></clr-stack-content>
+          <clr-stack-block>
+            <clr-stack-label>วันที่รับ</clr-stack-label>
+            <clr-stack-content>
+              <div style="width: 200px;">
+                <my-date-picker-th name="receiveDate" [options]="myDatePickerOptions" [(ngModel)]="receiveDate">
+                </my-date-picker-th>
+              </div>
+            </clr-stack-content>
+          </clr-stack-block>
+          <clr-stack-block>
+            <clr-stack-label>เลขที่รับ</clr-stack-label>
+            <clr-stack-content>
+              <input class="form-control" style="width: 300px;" name="receiveCode" type="text" [(ngModel)]="receiveCode" id="receiveCode">
+            </clr-stack-content>
+          </clr-stack-block>
+          <clr-stack-block>
+            <clr-stack-label>ผู้จัดจำหน่าย</clr-stack-label>
+            <clr-stack-content>
+              <input disabled [(ngModel)]="selectedSupplier.supplier_name" class="form-control" style="width: 300px;" name="genericName" type="text" id="supplierName">
+              <button class="btn btn-sm btn-link" (click)="searchSuppliers()">
+              ค้นหา...
+            </button>
+            </clr-stack-content>
+          </clr-stack-block>
+          <clr-stack-block>
+            <clr-stack-label>รับเข้าคลัง</clr-stack-label>
+            <clr-stack-content>
+              <div class="select form-control">
+                <select disabled style="width: 300px;" name="warehouseId" id="warehouseId" [(ngModel)]="warehouseId">
+                <option *ngFor="let w of warehouses" [value]="w.warehouse_id">{{w.warehouse_name}}</option>
+              </select>
+              </div>
+            </clr-stack-content>
+          </clr-stack-block>
+        </clr-stack-block>
+      </clr-stack-view>
+
+      <p>ค้นหาสินค้า</p>
+      <form class="search">
+        <label for="search_input">
+            <input id="search_input" name="query" [(ngModel)]="query" (keyup)="doSearch()" style="width: 300px;" type="text" placeholder="ค้นหาสินค้า...">
+        </label>
+      </form>
+      <clr-datagrid [style.height.px]="250" [clrDgLoading]="loading">
+        <clr-dg-column [style.width.%]="40">ชื่อสินค้า</clr-dg-column>
+        <clr-dg-column [style.width.%]="20">Generic Name</clr-dg-column>
+        <!-- <clr-dg-column>ประเภท</clr-dg-column> -->
+        <clr-dg-column>หน่วย</clr-dg-column>
+        <clr-dg-column></clr-dg-column>
+
+        <clr-dg-row *clrDgItems="let p of allProducts" [clrDgItem]="p">
+          <!-- <app-receive-add-product *clrIfExpanded [productId]="p.product_id" ngProjectAs="clr-dg-row-detail"></app-receive-add-product> -->
+          <clr-dg-cell>{{p.product_name}}</clr-dg-cell>
+          <clr-dg-cell>{{p.generic_name}}</clr-dg-cell>
+          <!-- <clr-dg-cell>{{p.generic_type_name}}</clr-dg-cell> -->
+          <clr-dg-cell>{{p.unit_name}}</clr-dg-cell>
+          <clr-dg-cell>
+            <div class="btn-group btn-primary">
+              <button class="btn btn-sm btn-success" [disabled]="p.is_selected == 'Y'" (click)="addProduct(p)">เพิ่ม</button>
+              <button class="btn btn-sm btn-outline-success" [disabled]="p.is_selected == 'Y'" (click)="showLots(p)">Lots</button>
+            </div>
+          </clr-dg-cell>
+        </clr-dg-row>
+
+        <clr-dg-footer>
+          {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} จาก {{pagination.totalItems}} รายการ
+          <clr-dg-pagination #pagination [clrDgPageSize]="50"></clr-dg-pagination>
+        </clr-dg-footer>
+
+      </clr-datagrid>
+
+      <p>รายการที่ถูกเลือก</p>
+      <clr-datagrid [style.height.px]="300">
+        <clr-dg-column [style.width.%]="25">ชื่อสินค้า</clr-dg-column>
+        <clr-dg-column [style.width.%]="15">หน่วย</clr-dg-column>
+        <clr-dg-column [style.width.%]="15">ราคา</clr-dg-column>
+        <clr-dg-column [style.width.%]="15">จำนวน</clr-dg-column>
+        <clr-dg-column [style.width.%]="25">Lot</clr-dg-column>
+
+        <clr-dg-row *clrDgItems="let g of products" [clrDgItem]="g">
+           <clr-dg-action-overflow>
+            <button class="action-item" (click)="removeSelected(g)">
+              <clr-icon shape="trash" class="is-error"></clr-icon>
+              ลบรายการ</button>
+          </clr-dg-action-overflow> 
+          <clr-dg-cell>{{g.product_name}}</clr-dg-cell>
+          <clr-dg-cell>{{g.unit_name}}</clr-dg-cell>
+          <clr-dg-cell>{{g.cost}}</clr-dg-cell>
+          <clr-dg-cell>
+            <input type="text" [textMask]="{mask: mask, guide: false}" #qty (keyup)="setQty(g, qty)" style="width: 100px; text-align: right;">
+          </clr-dg-cell>
+          <clr-dg-cell>
+            <app-select-lots [productId]="g.product_id" (onSelect)="setLotSelect($event)"></app-select-lots>
+          </clr-dg-cell>
+        </clr-dg-row>
+
+        <clr-dg-footer>
+          {{paginationSelected.firstItem + 1}} - {{paginationSelected.lastItem + 1}} จาก {{paginationSelected.totalItems}} รายการ
+          <clr-dg-pagination #paginationSelected [clrDgPageSize]="50"></clr-dg-pagination>
+        </clr-dg-footer>
+
+      </clr-datagrid>
+
+    </div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-sm btn-primary" [disabled]="!products.length || isSaving" (click)="saveReceive()">บันทึกรับสินค้า</button>
+    <a href="#/admin/receives" class="btn btn-sm btn-outline-danger">ยกเลิก</a>
+  </div>
+</div>
+
+<clr-modal [(clrModalOpen)]="openSupplierModal" [clrModalClosable]="false" [clrModalSize]="'lg'">
+  <h3 class="modal-title">ค้นหา ผู้จำหน่าย</h3>
+  <div class="modal-body">
+
+    <clr-datagrid [style.height.%]="80" [clrDgLoading]="loadingSupplier" [(clrDgSingleSelected)]="selectedSupplier">
+      <clr-dg-column [clrDgField]="'supplier_name'">ชื่อผู้จัดจำหน่าย</clr-dg-column>
+      <clr-dg-column [clrDgField]="'address'">ที่อยู่</clr-dg-column>
+
+      <clr-dg-row *clrDgItems="let s of suppliers" [clrDgItem]="s">
+        <clr-dg-cell>{{s.supplier_name}}</clr-dg-cell>
+        <clr-dg-cell>{{s.address}}</clr-dg-cell>
+      </clr-dg-row>
+
+      <clr-dg-footer>
+        {{paginationSupplier.firstItem + 1}} - {{paginationSupplier.lastItem + 1}} จาก {{paginationSupplier.totalItems}} รายการ
+        <clr-dg-pagination #paginationSupplier [clrDgPageSize]="50"></clr-dg-pagination>
+      </clr-dg-footer>
+
+    </clr-datagrid>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)="openSupplierModal = false">ยกเลิก</button>
+    <button type="button" class="btn btn-primary" [disabled]="!selectedSupplier" (click)="doSelectSupplier()">เลือก</button>
+  </div>
+</clr-modal>
+
+
+<app-lots #lotModal [(openLots)]="openNewLot" (onSuccess)="refreshLot()"></app-lots>

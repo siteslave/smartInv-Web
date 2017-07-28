@@ -1,0 +1,167 @@
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="#/admin" routerLink="/admin">หน้าหลัก</a>
+  <span class="breadcrumb-item active">รายการสินค้า</span>
+</nav>
+
+<button class="btn btn-sm btn-success" (click)="showModal()">+ เพิ่มรายการ</button>
+
+<clr-datagrid [style.height.%]="80" [clrDgLoading]="loading">
+  <clr-dg-column [style.width.%]="25">ชื่อสินค้า</clr-dg-column>
+  <clr-dg-column [style.width.%]="20">Generic Name</clr-dg-column>
+  <clr-dg-column [style.width.%]="20">ผู้จำหน่าย</clr-dg-column>
+  <clr-dg-column [style.width.%]="15">คงเหลือ</clr-dg-column>
+  <clr-dg-column [style.width.%]="15">หน่วย</clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let product of products" [clrDgItem]="product">
+    <clr-dg-action-overflow>
+      <button class="action-item" (click)="showLot(product)">
+              <clr-icon shape="organization"></clr-icon>
+              กำหนด Lots</button>
+      <button class="action-item" (click)="onEdit(product)">
+              <clr-icon shape="note"></clr-icon>
+              แก้ไขรายการ</button>
+      <button class="action-item" (click)="onDelete(product)">
+              <clr-icon shape="trash" class="is-error"></clr-icon>
+              ลบรายการ</button>
+    </clr-dg-action-overflow>
+    <clr-dg-cell>{{product.product_name}}</clr-dg-cell>
+    <clr-dg-cell>{{product.generic_name}}</clr-dg-cell>
+    <clr-dg-cell>{{product.supplier_name}}</clr-dg-cell>
+    <clr-dg-cell style="text-align: right;">{{product.qty | number}}</clr-dg-cell>
+    <clr-dg-cell style="text-align: center;">{{product.unit_name}}</clr-dg-cell>
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} จาก {{pagination.totalItems}} รายการ
+    <clr-dg-pagination #pagination [clrDgPageSize]="50"></clr-dg-pagination>
+  </clr-dg-footer>
+
+</clr-datagrid>
+
+<clr-modal [(clrModalOpen)]="openModal" [clrModalClosable]="false">
+  <h3 class="modal-title">เพิ่ม/แก้ไขสินค้า</h3>
+  <div class="modal-body">
+    <form>
+      <section class="form-block">
+        <div class="form-group row">
+          <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+            <label for="gForm_1">ชื่อสินค้า</label>
+          </div>
+          <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+            <input class="form-control" name="productName" type="text" [(ngModel)]="productName" id="gForm_1">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+            <label for="gForm_3">Generic</label>
+          </div>
+          <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+            <input disabled class="form-control" name="genericName" type="text" [(ngModel)]="selectedGeneric.generic_name" id="supplierName">
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <button class="btn btn-sm btn-link" (click)="searchGeneric()">
+              ค้นหา...
+            </button>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+            <label for="gForm_3">ผู้จำหน่าย</label>
+          </div>
+          <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+            <input disabled class="form-control" name="supplierName" type="text" [(ngModel)]="selectedSupplier.supplier_name" id="supplierName">
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <button class="btn btn-sm btn-link" (click)="searchSuppliers()">
+              ค้นหา...
+            </button>
+          </div>
+        </div>
+      </section>
+    </form>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)="openModal = false">ยกเลิก</button>
+    <button type="button" class="btn btn-primary" [disabled]="!selectedSupplier.supplier_name || !productName || !selectedGeneric.generic_name"
+      (click)="doSave()">บันทึก</button>
+  </div>
+</clr-modal>
+
+
+<clr-modal [(clrModalOpen)]="openGenericModal" [clrModalClosable]="false">
+  <h3 class="modal-title">ค้นหา Generic</h3>
+  <div class="modal-body">
+    <clr-datagrid [style.height.%]="80" [clrDgLoading]="loadingGeneric" [(clrDgSingleSelected)]="selectedGeneric">
+      <clr-dg-column [clrDgField]="'generic_name'">Generic Name</clr-dg-column>
+      <clr-dg-column [clrDgField]="'generic_name'">ประเภท</clr-dg-column>
+
+      <clr-dg-row *clrDgItems="let g of generics" [clrDgItem]="g">
+        <clr-dg-cell>{{g.generic_name}}</clr-dg-cell>
+        <clr-dg-cell>{{g.generic_type_name}}</clr-dg-cell>
+      </clr-dg-row>
+
+      <clr-dg-footer>
+        {{paginationGeneric.firstItem + 1}} - {{paginationGeneric.lastItem + 1}} จาก {{paginationGeneric.totalItems}} รายการ
+        <clr-dg-pagination #paginationGeneric [clrDgPageSize]="50"></clr-dg-pagination>
+      </clr-dg-footer>
+
+    </clr-datagrid>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)="openGenericModal = false">ยกเลิก</button>
+    <button type="button" class="btn btn-primary" [disabled]="!selectedGeneric" (click)="doSelectGeneric()">เลือก</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="openSupplierModal" [clrModalClosable]="false" [clrModalSize]="'lg'">
+  <h3 class="modal-title">ค้นหา ผู้จำหน่าย</h3>
+  <div class="modal-body">
+
+    <clr-datagrid [style.height.%]="80" [clrDgLoading]="loadingSupplier" [(clrDgSingleSelected)]="selectedSupplier">
+      <clr-dg-column [clrDgField]="'supplier_name'">ชื่อผู้จัดจำหน่าย</clr-dg-column>
+      <clr-dg-column [clrDgField]="'address'">ที่อยู่</clr-dg-column>
+
+      <clr-dg-row *clrDgItems="let s of suppliers" [clrDgItem]="s">
+        <clr-dg-cell>{{s.supplier_name}}</clr-dg-cell>
+        <clr-dg-cell>{{s.address}}</clr-dg-cell>
+      </clr-dg-row>
+
+      <clr-dg-footer>
+        {{paginationSupplier.firstItem + 1}} - {{paginationSupplier.lastItem + 1}} จาก {{paginationSupplier.totalItems}} รายการ
+        <clr-dg-pagination #paginationSupplier [clrDgPageSize]="50"></clr-dg-pagination>
+      </clr-dg-footer>
+
+    </clr-datagrid>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)="openSupplierModal = false">ยกเลิก</button>
+    <button type="button" class="btn btn-primary" [disabled]="!selectedSupplier" (click)="doSelectSupplier()">เลือก</button>
+  </div>
+</clr-modal>
+
+
+<clr-modal [(clrModalOpen)]="openUnitModal" [clrModalClosable]="false">
+  <h3 class="modal-title">ค้นหาหน่วยสินค้า</h3>
+  <div class="modal-body">
+
+    <clr-datagrid [style.height.%]="80" [clrDgLoading]="loadingUnit" [(clrDgSingleSelected)]="selectedUnit">
+      <clr-dg-column [clrDgField]="'unit_name'">ชื่อหน่วยสินค้า</clr-dg-column>
+      <clr-dg-row *clrDgItems="let u of units" [clrDgItem]="u">
+        <clr-dg-cell>{{u.unit_name}}</clr-dg-cell>
+      </clr-dg-row>
+
+      <clr-dg-footer>
+        {{paginationUnit.firstItem + 1}} - {{paginationUnit.lastItem + 1}} จาก {{paginationUnit.totalItems}} รายการ
+        <clr-dg-pagination #paginationUnit [clrDgPageSize]="50"></clr-dg-pagination>
+      </clr-dg-footer>
+
+    </clr-datagrid>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)="openUnitModal = false">ยกเลิก</button>
+    <button type="button" class="btn btn-primary" [disabled]="!selectedSupplier" (click)="doSelectUnit()">เลือก</button>
+  </div>
+</clr-modal>
+
+<app-lots #lotModal [(openLots)]="openNewLot" (onSuccess)="refreshLot()"></app-lots>

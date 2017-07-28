@@ -1,0 +1,115 @@
+<clr-main-container>
+  <clr-header class="header-4">
+    <div class="branding">
+      <a class="nav-link">
+        <clr-icon shape="storage"></clr-icon>
+        <span class="title">Smart Inventory</span>
+      </a>
+    </div>
+    <div class="header-nav">
+      <a class=" nav-link nav-icon" routerLink='/admin/main' routerLinkActive='active'>
+        <clr-icon shape="home"></clr-icon>
+      </a>
+      <a class=" nav-link nav-icon" routerLink='/admin/suppliers' routerLinkActive='active'>
+        <clr-icon shape="group"></clr-icon>
+      </a>
+      <a class=" nav-link nav-icon" routerLink='/admin/departments' routerLinkActive='active'>
+        <clr-icon shape="organization"></clr-icon>
+      </a>
+      <a class=" nav-link nav-icon" routerLink='/admin/generic' routerLinkActive='active'>
+        <clr-icon shape="storage"></clr-icon>
+      </a>
+      <a class=" nav-link nav-icon" routerLink='/admin/units' routerLinkActive='active'>
+        <clr-icon shape="objects"></clr-icon>
+      </a>
+    </div>
+    <div class="header-actions">
+      <clr-dropdown class="dropdown bottom-right">
+        <button class="nav-text" clrDropdownToggle>
+                {{ fullname }}
+                <clr-icon shape="caret down"></clr-icon>
+            </button>
+        <div class="dropdown-menu">
+          <a href="javascript://" clrDropdownItem>Preferences</a>
+          <a (click)="logout()" clrDropdownItem>Log out</a>
+        </div>
+      </clr-dropdown>
+    </div>
+  </clr-header>
+  <nav class="subnav">
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" href="javascript://" routerLink='/admin/receives' routerLinkActive='active'>รับสินค้าเข้าคลัง</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="javascript://" routerLink='/admin/generice-medicine' routerLinkActive='active'>จ่ายสินค้าให้หน่วยเบิก</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="javascript://" routerLink='/admin/generic' routerLinkActive='active'>ข้อมูล Generic</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="content-container">
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+
+    <nav class="sidenav" [clr-nav-level]="1">
+      <section class="sidenav-content">
+        <clr-tree-node [clrTreeNodeExpanded]="true">
+          เมนูหลัก
+          <clr-tree-node>
+            <button class="clr-treenode-link" routerLink='/admin/requests' routerLinkActive='active'>
+              <clr-icon shape="shopping-cart"></clr-icon>
+              รายการขอเบิก
+            </button>
+          </clr-tree-node>
+          <clr-tree-node>
+            <button class="clr-treenode-link" routerLink='/admin/receives' routerLinkActive='active'>
+              <clr-icon shape="note"></clr-icon>
+              รับสินค้าเข้าคลัง
+            </button>
+          </clr-tree-node>
+        </clr-tree-node>
+
+        <clr-tree-node [clrTreeNodeExpanded]="true">
+          ข้อมูลพื้นฐาน
+          <clr-tree-node>
+            <button class="clr-treenode-link" routerLink='/admin/products' routerLinkActive='active'>
+              <clr-icon shape="shopping-cart"></clr-icon>
+              รายการสินค้า
+            </button>
+          </clr-tree-node>
+          <clr-tree-node>
+            <button class="clr-treenode-link" routerLink='/admin/generic' routerLinkActive='active'>
+              <clr-icon shape="storage"></clr-icon>
+              รายการ Generics
+            </button>
+          </clr-tree-node>
+          <clr-tree-node>
+            <button class="clr-treenode-link" routerLink='/admin/units' routerLinkActive='active'>
+              <clr-icon shape="objects"></clr-icon>
+              หน่วยสินค้า
+            </button>
+          </clr-tree-node>
+          <clr-tree-node>
+            <button class="clr-treenode-link" routerLink='/admin/departments' routerLinkActive='active'>
+              <clr-icon shape="organization"></clr-icon>
+              หน่วยเบิก
+            </button>
+          </clr-tree-node>
+          <clr-tree-node>
+            <button class="clr-treenode-link" routerLink='/admin/suppliers' routerLinkActive='active'>
+              <clr-icon shape="users"></clr-icon>
+              ผู้จัดจำหน่าย
+            </button>
+          </clr-tree-node>
+        </clr-tree-node>
+
+      </section>
+    </nav>
+
+  </div>
+
+</clr-main-container>

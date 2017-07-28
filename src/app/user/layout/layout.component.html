@@ -1,0 +1,79 @@
+<clr-main-container>
+  <clr-header class="header-4">
+    <div class="branding">
+      <a class="nav-link">
+        <clr-icon shape="storage"></clr-icon>
+        <span class="title">Smart Inventory (ผู้ใช้งานทั่วไป)</span>
+      </a>
+    </div>
+    <div class="header-nav">
+      <a class=" nav-link nav-icon" routerLink='/users/request' routerLinkActive='active'>
+        <clr-icon shape="shopping-cart"></clr-icon>
+      </a>
+      <a class=" nav-link nav-icon" routerLink='/users/stock' routerLinkActive='active'>
+        <clr-icon shape="storage"></clr-icon>
+      </a>
+    </div>
+    <div class="header-actions">
+      <clr-dropdown class="dropdown bottom-right">
+        <button class="nav-text" clrDropdownToggle>
+                {{ fullname }}
+                <clr-icon shape="caret down"></clr-icon>
+            </button>
+        <div class="dropdown-menu">
+          <a href="javascript://" clrDropdownItem>Preferences</a>
+          <a (click)="logout()" clrDropdownItem>Log out</a>
+        </div>
+      </clr-dropdown>
+    </div>
+  </clr-header>
+  <nav class="subnav">
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" href="javascript://" routerLink='/users/request' routerLinkActive='active'>เบิกวัสดุ</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="javascript://" routerLink='/users/change-password' routerLinkActive='active'>เปลี่ยนรหัสผ่าน</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="content-container">
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+
+    <nav class="sidenav" [clr-nav-level]="1">
+      <section class="sidenav-content">
+        <clr-tree-node [clrTreeNodeExpanded]="true">
+          เมนูหลัก
+          <clr-tree-node>
+            <button class="clr-treenode-link" routerLink='/users/request' routerLinkActive='active'>
+              <clr-icon shape="shopping-cart"></clr-icon>
+              เบิกวัสดุ
+            </button>
+          </clr-tree-node>
+          <clr-tree-node>
+            <button class="clr-treenode-link" routerLink='/users/stock' routerLinkActive='active'>
+              <clr-icon shape="storage"></clr-icon>
+              สินค้าในคลัง
+            </button>
+          </clr-tree-node>
+        </clr-tree-node>
+
+        <clr-tree-node [clrTreeNodeExpanded]="true">
+          เครื่องมือ
+          <clr-tree-node>
+            <button class="clr-treenode-link" routerLink='/users/change-password' routerLinkActive='active'>
+              <clr-icon shape="key"></clr-icon>
+              เปลี่ยนรหัสผ่าน
+            </button>
+          </clr-tree-node>
+        </clr-tree-node>
+
+      </section>
+    </nav>
+
+  </div>
+
+</clr-main-container>

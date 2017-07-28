@@ -1,0 +1,98 @@
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="#/admin" routerLink="/admin">หน้าหลัก</a>
+  <span class="breadcrumb-item active">ผู้จัดจำหน่าย (Suppliers)</span>
+</nav>
+
+
+<button class="btn btn-sm btn-success" (click)="showModal()">+ เพิ่มรายการ</button>
+
+<clr-datagrid [style.height.%]="80" [clrDgLoading]="loading">
+  <clr-dg-column [clrDgField]="'supplier_name'">ชื่อผู้จัดจำหน่าย</clr-dg-column>
+  <clr-dg-column [clrDgField]="'address'">ที่อยู่</clr-dg-column>
+  <clr-dg-column [clrDgField]="'telephone'">โทรศัพท์</clr-dg-column>
+  <clr-dg-column [clrDgField]="'contact_name'">ชื่อผู้ติดต่อ</clr-dg-column>
+  <clr-dg-column [clrDgField]="'contact_telephone'">โทรศัพท์</clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let s of suppliers" [clrDgItem]="s">
+    <clr-dg-action-overflow>
+      <button class="action-item" (click)="onEdit(s)">
+              <clr-icon shape="note"></clr-icon>
+              แก้ไขรายการ</button>
+      <button class="action-item" (click)="onDelete(s)">
+              <clr-icon shape="trash" class="is-error"></clr-icon>
+              ลบรายการ</button>
+    </clr-dg-action-overflow>
+    <clr-dg-cell>{{s.supplier_name}}</clr-dg-cell>
+    <clr-dg-cell>{{s.address}}</clr-dg-cell>
+    <clr-dg-cell>{{s.telephone}}</clr-dg-cell>
+    <clr-dg-cell>{{s.contact_name}}</clr-dg-cell>
+    <clr-dg-cell>{{s.contact_telephone}}</clr-dg-cell>
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} จาก {{pagination.totalItems}} รายการ
+    <clr-dg-pagination #pagination [clrDgPageSize]="50"></clr-dg-pagination>
+  </clr-dg-footer>
+
+</clr-datagrid>
+
+<clr-modal [(clrModalOpen)]="openModal" [clrModalClosable]="false">
+  <h3 class="modal-title">เพิ่ม/แก้ไข ผู้จัดจำหน่าย</h3>
+  <div class="modal-body">
+    <form>
+      <section class="form-block">
+        <div class="form-group row">
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <label for="supplierName" class="required">ชื่อ ผู้จัดจำหน่าย</label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <input class="form-control" name="supplierName" type="text" [(ngModel)]="supplierName" id="gForm_1">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <label for="address" class="required">ที่อยู่</label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <textarea rows="3" name="address" type="text" [(ngModel)]="address" id="address"></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <label for="telephone">โทรศัพท์</label>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <input class="form-control" name="telephone" type="text" [(ngModel)]="telephone" id="telephone">
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <label for="fax">แฟกซ์</label>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <input class="form-control" name="fax" type="text" [(ngModel)]="fax" id="fax">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <label for="contactName" class="required">ชื่อผู้ติดต่อ</label>
+          </div>
+          <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+            <input class="form-control" name="contactName" type="text" [(ngModel)]="contactName" id="contactName">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <label for="contactTelephone">เบอร์โทรศัพท์</label>
+          </div>
+          <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+            <input class="form-control" name="contactTelephone" type="text" [(ngModel)]="contactTelephone" id="contactTelephone">
+          </div>
+        </div>
+      </section>
+    </form>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" (click)="openModal = false">ยกเลิก</button>
+    <button type="button" class="btn btn-primary" [disabled]="!supplierName || !contactName || !address" (click)="doSave()">บันทึก</button>
+  </div>
+</clr-modal>

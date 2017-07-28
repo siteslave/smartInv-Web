@@ -1,0 +1,83 @@
+<clr-modal [(clrModalOpen)]="openLots" [clrModalClosable]="false" [clrModalSize]="'lg'">
+  <h3 class="modal-title">รายการ Lots ({{productId}})</h3>
+  <div class="modal-body">
+    <!--<button *ngIf="!productLots.length" class="btn btn-primary" (click)="showLots()">แสดงรายการ Lots</button>-->
+    <clr-datagrid [clrDgLoading]="loadingLots" [style.height.px]="300">
+      <clr-dg-column [clrDgField]="'lot_no'">Lot no</clr-dg-column>
+      <clr-dg-column [clrDgField]="'receive_date'">วันที่รับเข้า</clr-dg-column>
+      <clr-dg-column [clrDgField]="'cost'">@ราคา</clr-dg-column>
+      <clr-dg-column [clrDgField]="'qty'">คงเหลือ</clr-dg-column>
+      <clr-dg-placeholder>ไม่พบข้อมูล!</clr-dg-placeholder>
+      <clr-dg-row *clrDgItems="let l of productLots" [clrDgItem]="l">
+        <clr-dg-action-overflow>
+          <button class="action-item" (click)="edit(l)">
+        <clr-icon shape="note"></clr-icon> แก้ไข
+      </button>
+        </clr-dg-action-overflow>
+        <clr-dg-cell>{{l.lot_no}}</clr-dg-cell>
+        <clr-dg-cell>{{l.receive_date | toThaiDate}}</clr-dg-cell>
+        <clr-dg-cell style="text-align: right;">{{l.cost | number: '1.2-2'}}</clr-dg-cell>
+        <clr-dg-cell style="text-align: right;">{{l.qty | number}}</clr-dg-cell>
+      </clr-dg-row>
+
+      <clr-dg-footer>
+        {{pagination2.firstItem + 1}} - {{pagination2.lastItem + 1}} จาก {{pagination2.totalItems}} รายการ
+        <clr-dg-pagination #pagination2 [clrDgPageSize]="10"></clr-dg-pagination>
+      </clr-dg-footer>
+    </clr-datagrid>
+  </div>
+  <div class="modal-footer">
+
+    <button type="button" class="btn btn-sm btn-success" (click)="addLot()">
+        +เพิ่ม Lot ใหม่
+    </button>
+    <button type="button" class="btn btn-sm btn-danger-outline" (click)="closeModal()">
+        ปิด
+    </button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="openNew" [clrModalClosable]="false">
+  <h3 class="modal-title">เพิ่ม/แก้ไข Lot</h3>
+  <div class="modal-body">
+
+    <form>
+      <section class="form-block">
+        <div class="form-group row">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label class="required" for="lotNo">Lot no.</label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <input class="form-control" type="text" name="lotNo" [(ngModel)]="lotNo">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label class="required" for="cost">ราคาทุน (ต่อหน่วย)</label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <input appNumberOnly class="form-control" type="number" name="cost" [(ngModel)]="cost">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label class="required" for="cost">ราคาขาย (ต่อหน่วย)</label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <input appNumberOnly class="form-control" type="number" name="price" [(ngModel)]="price">
+          </div>
+        </div>
+      </section>
+    </form>
+
+  </div>
+  <div class="modal-footer">
+
+    <button type="button" class="btn btn-primary" (click)="doSaveNewLot()" [disabled]="!lotNo || !cost || isSaving">
+        บันทึก
+    </button>
+    <button type="button" class="btn btn-danger-outline" (click)="openNew = false">
+        ปิด
+    </button>
+  </div>
+</clr-modal>

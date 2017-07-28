@@ -1,0 +1,67 @@
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="#/users" routerLink="/users">หน้าหลัก</a>
+  <span class="breadcrumb-item active">เบิกวัสดุ</span>
+</nav>
+
+<button class="btn btn-sm btn-success" (click)="newRequest()">+ บันทึกขอเบิก</button>
+
+<div class="row">
+  <div class="col-md-6">
+    <form class="search">
+      <label for="search_input">
+        <input id="search_input" name="query" [(ngModel)]="query" (keyup)="doSearch()" style="width: 300px;" type="text" placeholder="ค้นหา...">
+      </label>
+    </form>
+  </div>
+  <div class="col-md-6">
+    <div class="btn-group" style="float: right;">
+      <div class="radio btn btn-sm">
+        <input [checked]="listType === 0" (click)="getListBy(0)" type="radio" name="btn-group-demo-radios" id="btn-demo-radio-1">
+        <label for="btn-demo-radio-1">ทั้งหมด</label>
+      </div>
+      <div class="radio btn btn-sm">
+        <input [checked]="listType === 1" (click)="getListBy(1)" type="radio" name="btn-group-demo-radios" id="btn-demo-radio-2">
+        <label for="btn-demo-radio-2">อนุมัติแล้ว</label>
+      </div>
+      <div class="radio btn btn-sm">
+        <input  [checked]="listType === 2" (click)="getListBy(2)" type="radio" name="btn-group-demo-radios" id="btn-demo-radio-3">
+        <label for="btn-demo-radio-3">รออนุมัติ</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<clr-datagrid [style.height.%]="80" [clrDgLoading]="loading">
+  <clr-dg-column [style.width.%]="15">วันที่</clr-dg-column>
+  <clr-dg-column [style.width.%]="25">เบิกจากคลัง</clr-dg-column>
+  <clr-dg-column [style.width.%]="30">เจ้าหน้าที่</clr-dg-column>
+  <clr-dg-column [style.width.%]="10">จำนวน (รายการ)</clr-dg-column>
+  <clr-dg-column [style.width.%]="10">อนุมัติ</clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let r of requests" [clrDgItem]="r">
+    <clr-dg-action-overflow>
+      <button class="action-item" (click)="showRequest(r)">
+        <clr-icon shape="note"></clr-icon>
+        ดูข้อมูลการเบิก
+      </button>
+      <button class="action-item" (click)="removeRequest(r)">
+        <clr-icon shape="trash" class="is-danger"></clr-icon>
+        ยกเลิกใบเบิก
+      </button>
+    </clr-dg-action-overflow>
+    <clr-dg-cell style="text-align: center;">{{r.request_date | toThaiDate}}</clr-dg-cell>
+    <clr-dg-cell>{{r.warehouse_name}}</clr-dg-cell>
+    <clr-dg-cell>{{r.user_fullname}}</clr-dg-cell>
+    <clr-dg-cell style="text-align: center;">{{r.total_products | number}}</clr-dg-cell>
+    <clr-dg-cell style="text-align: center;">
+      <clr-icon *ngIf="r.request_status === 'Y'" shape="check" class="is-success"></clr-icon>
+      <clr-icon *ngIf="r.request_status === 'N'" shape="close" class="is-danger"></clr-icon>
+    </clr-dg-cell>
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} จาก {{pagination.totalItems}} รายการ
+    <clr-dg-pagination #pagination [clrDgPageSize]="50"></clr-dg-pagination>
+  </clr-dg-footer>
+
+</clr-datagrid>

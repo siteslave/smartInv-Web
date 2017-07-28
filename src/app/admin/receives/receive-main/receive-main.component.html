@@ -1,0 +1,35 @@
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="#/admin" routerLink="/admin">หน้าหลัก</a>
+  <span class="breadcrumb-item active">รับสินค้าเข้าคลัง</span>
+</nav>
+
+<button class="btn btn-sm btn-success" (click)="newReceive()">+ บันทึกรับสินค้า</button>
+<form class="search">
+  <label for="search_input">
+      <input id="search_input" name="query" [(ngModel)]="query" (keyup)="doSearch()" style="width: 300px;" type="text" placeholder="ค้นหา...">
+  </label>
+</form>
+<clr-datagrid [style.height.%]="80" [clrDgLoading]="loading">
+  <clr-dg-column [style.width.%]="15">วันที่</clr-dg-column>
+  <clr-dg-column [style.width.%]="15">เลขที่รับ</clr-dg-column>
+  <clr-dg-column>ผู้จำหน่าย</clr-dg-column>
+  <clr-dg-column [style.width.%]="15">มูลค่า (บาท)</clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let r of receives" [clrDgItem]="r">
+    <clr-dg-action-overflow>
+      <button class="action-item" (click)="openReceive(r)">
+              <clr-icon shape="note"></clr-icon>
+              ดูข้อมูลการรับ</button>
+    </clr-dg-action-overflow>
+    <clr-dg-cell>{{r.receive_date | toThaiDate}}</clr-dg-cell>
+    <clr-dg-cell>{{r.receive_code}}</clr-dg-cell>
+    <clr-dg-cell>{{r.supplier_name}}</clr-dg-cell>
+    <clr-dg-cell style="text-align: right;">{{r.total_cost | number: '1.2-2'}}</clr-dg-cell>
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} จาก {{pagination.totalItems}} รายการ
+    <clr-dg-pagination #pagination [clrDgPageSize]="50"></clr-dg-pagination>
+  </clr-dg-footer>
+
+</clr-datagrid>

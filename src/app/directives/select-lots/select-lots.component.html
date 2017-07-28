@@ -1,0 +1,8 @@
+<div class="select">
+  <select id="lotId" (change)="setSelect()" [(ngModel)]="lotId">
+    <option>เลือก Lot</option>
+    <option *ngFor="let l of lots" [value]="l.lot_id">
+      {{ l.lot_no }} - ราคา {{ l.cost | number : '1.2-2'}}
+    </option>
+  </select>
+</div>
